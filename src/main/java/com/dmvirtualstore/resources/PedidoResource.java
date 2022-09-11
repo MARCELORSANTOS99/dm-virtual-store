@@ -8,24 +8,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dmvirtualstore.domain.APIResponse;
-import com.dmvirtualstore.domain.Cliente;
-import com.dmvirtualstore.services.ClienteService;
+import com.dmvirtualstore.domain.Pedido;
+import com.dmvirtualstore.services.PedidoService;
 
 @RestController
-@RequestMapping(value="/clientes")
-public class ClienteResource {
+@RequestMapping(value="/pedidos")
+public class PedidoResource {
 
 	@Autowired
-	private ClienteService service;
+	private PedidoService service;
 
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public ResponseEntity<?> find(@PathVariable Integer id) {
 
-		
-		Cliente obj = service.buscar(id);
+		Pedido obj = service.buscar(id);
 		
 		APIResponse result = new APIResponse(obj);
-		
 
 
 		return ResponseEntity.ok().body(result);

@@ -1,4 +1,5 @@
 package com.dmvirtualstore;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +9,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.dmvirtualstore.domain.Categoria;
 import com.dmvirtualstore.domain.Cidade;
+import com.dmvirtualstore.domain.Cliente;
+import com.dmvirtualstore.domain.Endereco;
 import com.dmvirtualstore.domain.Estado;
+import com.dmvirtualstore.domain.ItemPedido;
+import com.dmvirtualstore.domain.Pagamento;
+import com.dmvirtualstore.domain.PagamentoComBoleto;
+import com.dmvirtualstore.domain.PagamentoComCartao;
+import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.domain.Produto;
+import com.dmvirtualstore.domain.enuns.EstadoPagamento;
+import com.dmvirtualstore.domain.enuns.TipoCliente;
 import com.dmvirtualstore.repositories.CategoriaRepository;
 import com.dmvirtualstore.repositories.CidadeRepository;
+import com.dmvirtualstore.repositories.ClienteRepository;
+import com.dmvirtualstore.repositories.EnderecoRepository;
 import com.dmvirtualstore.repositories.EstadoRepository;
+import com.dmvirtualstore.repositories.ItemPedidoRepository;
+import com.dmvirtualstore.repositories.PagamentoRepository;
+import com.dmvirtualstore.repositories.PedidoRepository;
 import com.dmvirtualstore.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -30,6 +45,21 @@ public class DmVirtualStoreApplication implements CommandLineRunner {
 
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository ;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(DmVirtualStoreApplication.class, args);
@@ -69,6 +99,48 @@ public class DmVirtualStoreApplication implements CommandLineRunner {
 
 		estadoRepository.saveAll(Arrays.asList(est1,est2));
 		cidadeRepository.saveAll(Arrays.asList(c1,c2,c3));
+		
+		Cliente cli1 = new Cliente(null, "Debora Mende", "debora@hotmail.com", "22447234880", TipoCliente.PESSOAFISICA);
+		cli1.getTelefones().addAll(Arrays.asList("11-98564841","11-56663985"));
+
+		Endereco e1 = new Endereco(null, "Rua Zike Tuma", "118", "bl2", "Jd Ubirajara", "04458-000", cli1, c2);
+		Endereco e2 = new Endereco(null, "Rua Sobe e desce", "39", "bl1", "Jd Umbuiá", "04777-000", cli1, c3);
+
+		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
+
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1,e2));
+		
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); 
+
+
+		Pedido ped1 = new Pedido(null, sdf.parse("12/02/2022 06:34"),cli1,e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("08/02/2022 15:34"),cli1,e2);
+
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("13/02/2022 00:00"), null);
+		ped2.setPagamento(pagto2);
+
+		cli1.getPedidos().addAll(Arrays.asList(ped1,ped2));
+
+		pedidoRepository.saveAll(Arrays.asList(ped1,ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1,pagto2));
+		
+		ItemPedido ip1 = new ItemPedido(ped1,p1,0.00,1,2000.00);
+		ItemPedido ip3 = new ItemPedido(ped2,p2,100.00,1,800.00);
+
+		ped1.getItens().addAll(Arrays.asList(ip1));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+
+
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+	
+
+		itemPedidoRepository.saveAll(Arrays.asList(ip1,ip3));
 
 
 	}
