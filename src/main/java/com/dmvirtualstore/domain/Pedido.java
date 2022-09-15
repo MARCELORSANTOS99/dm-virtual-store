@@ -110,6 +110,16 @@ public class Pedido implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	public double getValorTotal() {
+		double soma = 0.0;
+		for(ItemPedido ip : itens) {
+			soma = soma + ip.getSubTotal();
+		}
+
+		return soma;
+
+	}
 
 	@Override
 	public int hashCode() {
