@@ -3,8 +3,10 @@ package com.dmvirtualstore.domain;
 import javax.persistence.Entity;
 
 import com.dmvirtualstore.domain.enuns.EstadoPagamento;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
+@JsonTypeName("pagamentoComCartao")
 public class PagamentoComCartao extends Pagamento{
 
 
