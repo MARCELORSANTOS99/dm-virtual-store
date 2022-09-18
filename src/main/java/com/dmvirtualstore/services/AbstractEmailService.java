@@ -2,13 +2,20 @@ package com.dmvirtualstore.services;
 
 import java.util.Date;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.Pedido;
+
 
 
 
@@ -17,15 +24,11 @@ public abstract class AbstractEmailService implements EmailService{
 	@Value("${default.sender}")
 	private String sender;
 	
-	/*
 	@Autowired
 	TemplateEngine templateEngine;
-	*/
 	
-	/*
 	@Autowired
 	private JavaMailSender javaMailSender;
-	*/
 	
 	@Override
 	public void sendOrderConfirmationEmail(Pedido obj) {
@@ -68,34 +71,24 @@ public abstract class AbstractEmailService implements EmailService{
 		return sm;
 	}
 	
-	/*
 	protected String htmlFromTemplatePedido(Pedido obj) {
 		Context context = new Context();
 		context.setVariable("pedido", obj);
 		return templateEngine.process("email/confirmacaoPedido", context);
 		
 	}
-	*/
-	
 	
 	@Override
 	public void sendOrderConfirmationHtmlEmail(Pedido obj) {
-		
-		SimpleMailMessage sm = prepareSimpleMailMessageFromPedido(obj);
-		sendEmail(sm);
-		
-	/*
 		try {
-			//MimeMessage mm = prepareMimeMessageFromPedido(obj);
+			MimeMessage mm = prepareMimeMessageFromPedido(obj);
 			sendHtmlEmail(mm);	
 		} catch (MessagingException e) {
 			sendOrderConfirmationEmail(obj);
 
 		}
-		
-		*/
 	}
-	/*
+
 	protected MimeMessage prepareMimeMessageFromPedido(Pedido obj) throws MessagingException {
 		
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -110,7 +103,7 @@ public abstract class AbstractEmailService implements EmailService{
 
 		return mimeMessage;
 	}
-	*/
+	
 	
 
 
