@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dmvirtualstore.domain.Cidade;
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.Endereco;
+import com.dmvirtualstore.domain.enuns.Perfil;
 import com.dmvirtualstore.domain.enuns.TipoCliente;
 import com.dmvirtualstore.dto.ClienteDTO;
 import com.dmvirtualstore.dto.ClienteNewDTO;
 import com.dmvirtualstore.repositories.ClienteRepository;
 import com.dmvirtualstore.repositories.EnderecoRepository;
+import com.dmvirtualstore.security.UserSS;
+import com.dmvirtualstore.services.exception.AuthorizationException;
 import com.dmvirtualstore.services.exception.DataIntegrityException;
 import com.dmvirtualstore.services.exception.ObjectNotFoundException;
 
@@ -38,6 +41,14 @@ public class ClienteService {
 	
 
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+						
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
