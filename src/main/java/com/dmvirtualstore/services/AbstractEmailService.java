@@ -41,12 +41,12 @@ public abstract class AbstractEmailService implements EmailService{
 	@Override
 	public void sendNewPasswordEmail(Cliente cliente, String newPass) {
 		
-		SimpleMailMessage sm = preparePasswordEmail(cliente,newPass);
+		SimpleMailMessage sm = prepareNewPasswordEmail(cliente,newPass);
 		sendEmail(sm);
 		
 	}
 
-	protected SimpleMailMessage preparePasswordEmail(Cliente cliente, String newPass) {
+	protected SimpleMailMessage prepareNewPasswordEmail(Cliente cliente, String newPass) {
 		
 		SimpleMailMessage sm = new SimpleMailMessage();
 		
