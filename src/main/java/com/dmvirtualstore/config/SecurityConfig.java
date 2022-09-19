@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.dmvirtualstore.security.JWTAuthenticationFilter;
+import com.dmvirtualstore.security.JWTAuthorizationFilter;
 import com.dmvirtualstore.security.JWTUtil;
 
 
@@ -78,6 +79,7 @@ public class SecurityConfig {
 			.anyRequest().authenticated();
             
 			http.addFilter(new JWTAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtUtil));
+			http.addFilter(new JWTAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtUtil,userDetailsService));
 			http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             
             
