@@ -20,6 +20,7 @@ import com.dmvirtualstore.domain.PagamentoComCartao;
 import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.domain.Produto;
 import com.dmvirtualstore.domain.enuns.EstadoPagamento;
+import com.dmvirtualstore.domain.enuns.Perfil;
 import com.dmvirtualstore.domain.enuns.TipoCliente;
 import com.dmvirtualstore.repositories.CategoriaRepository;
 import com.dmvirtualstore.repositories.CidadeRepository;
@@ -103,16 +104,24 @@ public class DBServices {
 		estadoRepository.saveAll(Arrays.asList(est1,est2));
 		cidadeRepository.saveAll(Arrays.asList(c1,c2,c3));
 		
-		Cliente cli1 = new Cliente(null, "Debora Mende", "marcelo.r.santos99@hotmail.com", "22447234880", TipoCliente.PESSOAFISICA,pe.encode("123"));
+		Cliente cli1 = new Cliente(null, "Debora Mendes", "marcelo.r.santos99@hotmail.com", "92598650000", TipoCliente.PESSOAFISICA,pe.encode("123"));
 		cli1.getTelefones().addAll(Arrays.asList("11-98564841","11-56663985"));
+		
+		Cliente cli2 = new Cliente(null, "Marcelo Santos", "marcelo.badjoca@gmail.com", "89501493032", TipoCliente.PESSOAFISICA,pe.encode("123"));
+		cli2.addPerfil(Perfil.ADMIN);
+		cli2.getTelefones().addAll(Arrays.asList("11-98564841","11-56663985"));
+
 
 		Endereco e1 = new Endereco(null, "Rua Zike Tuma", "118", "bl2", "Jd Ubirajara", "04458-000", cli1, c2);
 		Endereco e2 = new Endereco(null, "Rua Sobe e desce", "39", "bl1", "Jd Umbuiá", "04777-000", cli1, c3);
+		Endereco e3 = new Endereco(null, "R Floriano", "39", "bl1", "Jd Umbuiá", "04777-000", cli2, c3);
+
 
 		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 
-		clienteRepository.saveAll(Arrays.asList(cli1));
-		enderecoRepository.saveAll(Arrays.asList(e1,e2));
+		clienteRepository.saveAll(Arrays.asList(cli1,cli2));
+		enderecoRepository.saveAll(Arrays.asList(e1,e2,e3));
 		
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); 
