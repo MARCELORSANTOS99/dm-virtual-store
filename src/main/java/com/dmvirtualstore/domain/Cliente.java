@@ -63,7 +63,6 @@ public class Cliente implements Serializable{
 	private Set<Integer> perfis = new HashSet<>();
 	
 	
-	
 	public Cliente() {
 		addPerfil(Perfil.CLIENTE);
 	}
