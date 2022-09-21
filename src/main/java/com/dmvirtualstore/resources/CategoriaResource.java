@@ -23,6 +23,10 @@ import com.dmvirtualstore.domain.Categoria;
 import com.dmvirtualstore.dto.CategoriaDTO;
 import com.dmvirtualstore.services.CategoriaService;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping(value = "/categorias")
 public class CategoriaResource {
@@ -30,6 +34,7 @@ public class CategoriaResource {
 	@Autowired
 	private CategoriaService service;
 
+	@ApiOperation(value="Busca por id")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<APIResponse> find(@PathVariable Integer id) {
 
@@ -40,7 +45,9 @@ public class CategoriaResource {
 		return ResponseEntity.ok(result);
 	}
 
+	
 	@PreAuthorize("hasAnyRole('ADMIN')")
+	@ApiOperation(value="Inserir categoria")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto) {
 		
@@ -65,6 +72,9 @@ public class CategoriaResource {
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Não é possível excluir uma categoria que possui produtos"),
+			@ApiResponse(code = 404, message = "Código inexistente") })
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
@@ -81,6 +91,7 @@ public class CategoriaResource {
 	}
 
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	@ApiOperation(value="Retorna as categorias com paginação")
 	public ResponseEntity<APIResponse> findPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "title") String orderBy,
