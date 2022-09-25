@@ -16,53 +16,55 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.dmvirtualstore.domain.enuns.Perfil;
 import com.dmvirtualstore.domain.enuns.TipoCliente;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 @Entity
-public class Cliente implements Serializable{
-	
-	
+public class Cliente implements Serializable {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@JsonIgnore
 	private String nome;
-	
-	
+
 	@Column(unique = true)
 	private String email;
 	private String cpfOuCnpj;
 	private Integer tipo;
-	
+
 	@JsonIgnore
 	private String senha;
+
 	
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "carrinho_id", referencedColumnName = "id")
+	private Carrinho carrinho;
 	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
-	
 
 	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
 	private List<Endereco> enderecos = new ArrayList<>();
-	
+
 	@ElementCollection
 	@CollectionTable(name = "TELEFONE")
 	private Set<String> telefones = new HashSet<>();
-	
-	@ElementCollection(fetch=FetchType.EAGER)
+
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "PERFIS")
 	private Set<Integer> perfis = new HashSet<>();
-	
-	
+
 	public Cliente() {
 		addPerfil(Perfil.CLIENTE);
 	}
@@ -73,7 +75,7 @@ public class Cliente implements Serializable{
 		this.nome = nome;
 		this.email = email;
 		this.cpfOuCnpj = cpfOuCnpj;
-		this.tipo = (tipo == null)? null : tipo.getCod();
+		this.tipo = (tipo == null) ? null : tipo.getCod();
 		this.senha = senha;
 		addPerfil(Perfil.CLIENTE);
 	}
@@ -133,7 +135,7 @@ public class Cliente implements Serializable{
 	public void setTelefones(Set<String> telefones) {
 		this.telefones = telefones;
 	}
-	
+
 	public List<Pedido> getPedidos() {
 		return pedidos;
 	}
@@ -141,18 +143,14 @@ public class Cliente implements Serializable{
 	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
 	}
-	
 
-	
-	public Set<Perfil> getPerfis(){
+	public Set<Perfil> getPerfis() {
 		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
 	}
-	
+
 	public void addPerfil(Perfil perfil) {
 		perfis.add(perfil.getCod());
 	}
-	
-	
 
 	public String getSenha() {
 		return senha;
@@ -186,12 +184,5 @@ public class Cliente implements Serializable{
 			return false;
 		return true;
 	}
-
-	
-	
-	
-	
-	
-	
 
 }

@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dmvirtualstore.domain.APIResponse;
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.dto.ClienteDTO;
 import com.dmvirtualstore.dto.ClienteNewDTO;
+import com.dmvirtualstore.security.JWTUtil;
+import com.dmvirtualstore.services.AuthService;
 import com.dmvirtualstore.services.ClienteService;
 
 @RestController
@@ -30,7 +31,11 @@ public class ClienteResource {
 
 	@Autowired
 	private ClienteService service;
-
+	
+	@Autowired
+	private JWTUtil jwtUtil;
+	
+	
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public ResponseEntity<APIResponse> find(@PathVariable Integer id) {
 
@@ -45,14 +50,31 @@ public class ClienteResource {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto){
+	public ResponseEntity<APIResponse> insert(@Valid @RequestBody ClienteNewDTO objDto){
 
 		Cliente obj = service.fromDTO(objDto);
 
 		obj = service.insert(obj);
+		
+		/*
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).build();
+		*/		
+		
+		
+		String token = jwtUtil.generateToken(obj.getEmail());
+		
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("Bearer " + token);
+				
+		
+		objDto.setToken(sb.toString());
+		objDto.setId(obj.getId().toString());;
+		
+		APIResponse result = new APIResponse(objDto);
+		
+		
+		return ResponseEntity.ok().body(result);
 	}
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.PUT)

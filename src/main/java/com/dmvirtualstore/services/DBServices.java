@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.dmvirtualstore.domain.Carrinho;
 import com.dmvirtualstore.domain.Categoria;
 import com.dmvirtualstore.domain.Cidade;
 import com.dmvirtualstore.domain.Cliente;
@@ -22,6 +23,7 @@ import com.dmvirtualstore.domain.Produto;
 import com.dmvirtualstore.domain.enuns.EstadoPagamento;
 import com.dmvirtualstore.domain.enuns.Perfil;
 import com.dmvirtualstore.domain.enuns.TipoCliente;
+import com.dmvirtualstore.repositories.CarrinhoRepository;
 import com.dmvirtualstore.repositories.CategoriaRepository;
 import com.dmvirtualstore.repositories.CidadeRepository;
 import com.dmvirtualstore.repositories.ClienteRepository;
@@ -63,6 +65,9 @@ public class DBServices {
 	private ItemPedidoRepository itemPedidoRepository ;
 	
 	@Autowired
+	private CarrinhoRepository carrinhoRepository ;
+	
+	@Autowired
 	private BCryptPasswordEncoder pe;
 	
 	public void instatiateTestDataBase() throws ParseException {
@@ -98,6 +103,7 @@ public class DBServices {
 		Cidade c2 = new Cidade(null, "São Paulo", est2);
 		Cidade c3 = new Cidade(null, "Campinas", est2);
 
+
 		est1.getCidades().addAll(Arrays.asList(c1));
 		est2.getCidades().addAll(Arrays.asList(c2,c3));
 
@@ -119,10 +125,14 @@ public class DBServices {
 
 		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
 		cli2.getEnderecos().addAll(Arrays.asList(e3));
+		
+		Carrinho cart1 = new Carrinho(null, "teste", cli2);
+		
+		
 
 		clienteRepository.saveAll(Arrays.asList(cli1,cli2));
 		enderecoRepository.saveAll(Arrays.asList(e1,e2,e3));
-		
+		carrinhoRepository.saveAll(Arrays.asList(cart1));
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); 
 

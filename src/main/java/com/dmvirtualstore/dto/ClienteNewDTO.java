@@ -15,6 +15,8 @@ public class ClienteNewDTO implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	private String id;
+	
 	@NotEmpty(message = "Prenchimento obrigatório")
 	@Length(min = 5, max=120, message = "O Tamanho deve ser entre 5 e 120 caracateres")
 	private String nome;
@@ -37,6 +39,8 @@ public class ClienteNewDTO implements Serializable{
 	private String numero;
 	
 	private String complemento;
+	
+	private String token;
 	
 	
 	private String bairro;
@@ -164,6 +168,22 @@ public class ClienteNewDTO implements Serializable{
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	
