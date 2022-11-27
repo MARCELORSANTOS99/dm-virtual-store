@@ -22,7 +22,6 @@ import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.dto.ClienteDTO;
 import com.dmvirtualstore.dto.ClienteNewDTO;
 import com.dmvirtualstore.security.JWTUtil;
-import com.dmvirtualstore.services.AuthService;
 import com.dmvirtualstore.services.ClienteService;
 
 @RestController
@@ -50,7 +49,7 @@ public class ClienteResource {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<APIResponse> insert(@Valid @RequestBody ClienteNewDTO objDto){
+	public ResponseEntity<ClienteNewDTO> insert(@Valid @RequestBody ClienteNewDTO objDto){
 
 		Cliente obj = service.fromDTO(objDto);
 
@@ -71,10 +70,10 @@ public class ClienteResource {
 		objDto.setToken(sb.toString());
 		objDto.setId(obj.getId().toString());;
 		
-		APIResponse result = new APIResponse(objDto);
+		APIResponse result = new APIResponse(obj);
 		
 		
-		return ResponseEntity.ok().body(result);
+		return ResponseEntity.ok().body(objDto);
 	}
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.PUT)

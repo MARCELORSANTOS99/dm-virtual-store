@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,28 +34,52 @@ public class ProdutoResource {
 
 		return ResponseEntity.ok().body(obj);
 	}
+	
+	
+	@RequestMapping(value = "/all", method=RequestMethod.GET)
+	public ResponseEntity<APIResponse> findAll() {
+		List<Produto> list = service.findAll();
+
+		APIResponse result = new APIResponse(list);
+
+		return ResponseEntity.ok().body(result);
+	}
+	
 
 	@RequestMapping(value= "/page", method=RequestMethod.GET)
 	public ResponseEntity<APIResponse> findPage(
-			@RequestParam(value = "nome", defaultValue = "") String nome,
-			@RequestParam(value = "categorias", defaultValue = "") String categorias,
-			@RequestParam(value = "page", defaultValue = "0") Integer page,
-			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
-			@RequestParam(value = "orderBy", defaultValue = "title") String orderBy,
-			@RequestParam(value = "direction", defaultValue = "DESC") String direction
+			@RequestHeader(value = "nome", defaultValue = "") String nome,
+			@RequestHeader(value = "categorias", defaultValue = "0") String categorias,
+			@RequestHeader(value = "page", defaultValue = "0") String page,
+			@RequestHeader(value = "linesPerPage", defaultValue = "24") String linesPerPage,
+			@RequestHeader(value = "orderBy", defaultValue = "title") String orderBy,
+			@RequestHeader(value = "direction", defaultValue = "DESC") String direction
 			){
+		
+		System.out.println("TENTOU BUSCAR PRODUTOS");
 
+		Integer pageInt = Integer.parseInt(page);
+		Integer linesPerPageInt = Integer.parseInt(linesPerPage);
+
+		System.out.println("<<<mmmm>>>>");
+				
 		List<Integer> ids = URL.decodeIntList(categorias);
-		String nomeDecode = URL.decodeParam(nome);
+		if(ids.get(0) == 0) {
+			ids.clear();
+		}
+		
+		
+		String nomeDecode = URL.decodeParam(nome.toLowerCase());
 
-	 Page<Produto> list =  service.search(nomeDecode,ids, page,linesPerPage, orderBy, direction);
+	 Page<Produto> list =  service.search(nomeDecode,ids, pageInt,linesPerPageInt, orderBy, direction);
 
-	 Page<ProdutoDTO> listDTO = list.map(obj -> new ProdutoDTO(obj));
+	 //Page<ProdutoDTO> listDTO = list.map(obj -> new ProdutoDTO(obj));
 	 
-		APIResponse result = new APIResponse(listDTO);
+		APIResponse result = new APIResponse(list);
 
 
-	 return ResponseEntity.ok().body(result);
+		 return ResponseEntity.ok().body(result);
+
 	}
 
 }

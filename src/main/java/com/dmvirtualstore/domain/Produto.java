@@ -31,20 +31,23 @@ public class Produto implements Serializable {
 	private String unit;
 	private String picture;
 	
+
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "PRODUTO_CATEGORIA", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
 	private List<Categoria> categorias = new ArrayList<>();
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "id.produto")
 	private Set<ItemPedido> itens = new HashSet<>();
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "id.carrinho")
+	private Set<Carrinhoitem> itensCarrinho = new HashSet<>();
 
 	public Produto() {
 
 	}
-	
-	
 
 	public Produto(Integer id, String title, Double price, String description, String unit, String picture) {
 		super();
@@ -55,28 +58,38 @@ public class Produto implements Serializable {
 		this.unit = unit;
 		this.picture = picture;
 	}
-	
+
 	@JsonIgnore
-	public List<Pedido> getPedidos(){
+	public List<Pedido> getPedidos() {
 		List<Pedido> lista = new ArrayList<>();
-		for(ItemPedido x : itens) {
-			lista.add(x.getPedido());			
+		for (ItemPedido x : itens) {
+			lista.add(x.getPedido());
 		}
 
 		return lista;
 	}
 	
+	@JsonIgnore
+	public List<Carrinho> getCarrinhos() {
+		List<Carrinho> lista = new ArrayList<>();
+		for (Carrinhoitem x : itensCarrinho) {
+			lista.add(x.getCarrinho());
+		}
+
+		return lista;
+	}
+
 	public Set<ItemPedido> getItens() {
 		return itens;
 	}
-
-
+	
+	public Set<Carrinhoitem> getItensCarrinho() {
+		return itensCarrinho;
+	}
 
 	public void setItens(Set<ItemPedido> itens) {
 		this.itens = itens;
 	}
-
-
 
 	public Integer getId() {
 		return id;
@@ -133,6 +146,9 @@ public class Produto implements Serializable {
 	public void setCategorias(List<Categoria> categorias) {
 		this.categorias = categorias;
 	}
+	
+	
+	
 
 	@Override
 	public int hashCode() {

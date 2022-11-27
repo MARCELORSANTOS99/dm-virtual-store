@@ -2,9 +2,12 @@ package com.dmvirtualstore.domain.enuns;
 
 public enum EstadoPagamento {
 
-	PENDENTE(1,"Pendente"),
-	QUITADO(2,"Quitado"),
-	CANCELADO(3,"Cancelado");
+	PENDENTE(0,"pending_payment"),
+	CANCELADO(1,"refunded"),
+	QUITADO(2,"paid"),
+	PREPARACAO(3,"preparing_purchase"),
+	ENVIADO(4,"shipping"),
+	ENTREGUE(5,"delivered");
 
 	private int cod; 
 	private String descricao; 

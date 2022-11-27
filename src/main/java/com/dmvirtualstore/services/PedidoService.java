@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.ItemPedido;
+import com.dmvirtualstore.domain.Pagamento;
 import com.dmvirtualstore.domain.PagamentoComBoleto;
+import com.dmvirtualstore.domain.PagamentoComCartao;
+import com.dmvirtualstore.domain.PagamentoComPix;
 import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.domain.enuns.EstadoPagamento;
 import com.dmvirtualstore.repositories.ItemPedidoRepository;
@@ -21,6 +24,8 @@ import com.dmvirtualstore.security.UserSS;
 import com.dmvirtualstore.services.exception.AuthorizationException;
 import com.dmvirtualstore.services.exception.ObjectNotFoundException;
 
+import feign.FeignException.FeignClientException;
+
 @Service
 public class PedidoService {
 
@@ -28,7 +33,16 @@ public class PedidoService {
 	private PedidoRepository repo;
 	
 	@Autowired
+	private CarrinhoService carrinhoService;
+	
+	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private CartaoService cartaoService;
+	
+	@Autowired
+	private PixService pixService;
 
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
@@ -55,25 +69,50 @@ public class PedidoService {
 	
 	
 	public Pedido insert(Pedido obj) {
+		
 		obj.setId(null);
 		obj.setInstante(new Date());
+		obj.setVencimento(new Date());
 		obj.setCliente(clienteService.find(obj.getCliente().getId()));
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
-		if (obj.getPagamento() instanceof PagamentoComBoleto) {
-			PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
-			boletoService.preencherPagamentoComBoleto(pagto, obj.getInstante());
-		}
+		
 		obj = repo.save(obj);
-		pagamentoRepository.save(obj.getPagamento());
+		
 		for (ItemPedido ip : obj.getItens()) {
 			ip.setDesconto(0.0);
 			ip.setProduto(produtoService.find(ip.getProduto().getId()));
 			ip.setPreco(ip.getProduto().getPrice());
 			ip.setPedido(obj);
 		}
+		
+		if (obj.getPagamento() instanceof PagamentoComBoleto) {
+			PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
+			boletoService.preencherPagamentoComBoleto(pagto, obj.getInstante());
+		}
+		
+		if (obj.getPagamento() instanceof PagamentoComPix) {
+			System.out.println("<< 1>> ");
+			PagamentoComPix pagto = (PagamentoComPix) obj.getPagamento();
+			System.out.println("<< 2>> ");
+			pixService.preencherPagamentoComPix(pagto, obj);
+			System.out.println("<< 7>> ");
+		}
+		
+		if (obj.getPagamento() instanceof PagamentoComCartao) {
+			System.out.println("<< 1-c>> ");
+			PagamentoComCartao pagto = (PagamentoComCartao) obj.getPagamento();
+			System.out.println("<< 2-c>> ");
+			System.out.println(obj.getPagamento().toString());
+			cartaoService.pagamentoComCartao(pagto, obj);
+			System.out.println("<< 7-c>> ");
+		}
+		
+		pagamentoRepository.save(obj.getPagamento());
 		itemPedidoRepository.saveAll(obj.getItens());
 		emailService.sendOrderConfirmationHtmlEmail(obj);
+		
+		carrinhoService.cleanCarrinho();
 		return obj;
 	}
 	
@@ -86,5 +125,46 @@ public class PedidoService {
 		Cliente cliente =  clienteService.find(user.getId());
 		return repo.findByCliente(cliente, pageRequest);
 	}
+	
+	public void estornarPagamento(Integer id) {
+		Optional<Pedido> obj = repo.findById(id);
+		
+		
+		try {
+			if (obj.get().getPagamento() instanceof PagamentoComPix) {
+				System.out.println("<< 1>> ");
+				PagamentoComPix pagto = (PagamentoComPix) obj.get().getPagamento();
+				System.out.println("<< 2>> ");
+				pixService.estornoPagamentoPix(pagto.getIdPagamentoPix());
+				System.out.println("<< 7>> ");
+				System.out.println(obj.get().getPagamento().getEstado());
+				obj.get().getPagamento().setEstado(EstadoPagamento.CANCELADO);
+				System.out.println(obj.get().getPagamento().getEstado());
+				pagamentoRepository.save(obj.get().getPagamento());
+			}
+			
+			if (obj.get().getPagamento() instanceof PagamentoComCartao) {
+				System.out.println("<< 1>> ");
+				PagamentoComCartao pagto = (PagamentoComCartao) obj.get().getPagamento();
+				System.out.println("<< 2>> ");
+				cartaoService.estornarPagamentoCartao(pagto);
+				System.out.println("<< 7>> ");
+				System.out.println(obj.get().getPagamento().getEstado());
+				obj.get().getPagamento().setEstado(EstadoPagamento.CANCELADO);
+				System.out.println(obj.get().getPagamento().getEstado());
+				pagamentoRepository.save(obj.get().getPagamento());
+
+			}
+		
+			
+		} catch (FeignClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		 
+	}
+	
 
 }

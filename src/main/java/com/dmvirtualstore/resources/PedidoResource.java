@@ -1,6 +1,8 @@
 package com.dmvirtualstore.resources;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dmvirtualstore.domain.APIResponse;
 import com.dmvirtualstore.domain.Pedido;
+import com.dmvirtualstore.dto.PedidoDTO;
 import com.dmvirtualstore.services.PedidoService;
 
 @RestController
@@ -33,30 +36,52 @@ public class PedidoResource {
 		
 		APIResponse result = new APIResponse(obj);
 
-
 		return ResponseEntity.ok().body(result);
 	}
 	
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody Pedido obj) {
-		obj = service.insert(obj);
+	public ResponseEntity<PedidoDTO> insert(@Valid @RequestBody Pedido obj) {
+		System.out.println("<< 0>> ");
+		Pedido p = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).build();
+		
+		PedidoDTO pedidoDto = new PedidoDTO(p);
+		
+		//return ResponseEntity.created(uri).build();
+		return ResponseEntity.ok().body(pedidoDto);
+
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public ResponseEntity<APIResponse> findPage(
+	public ResponseEntity<List<PedidoDTO>> findPage(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
 			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
 			@RequestParam(value="orderBy", defaultValue="instante") String orderBy, 
 			@RequestParam(value="direction", defaultValue="DESC") String direction) {
-		Page<Pedido> list = service.findPage(page, linesPerPage, orderBy, direction);
 		
+		Page<Pedido> listPedidos = service.findPage(page, linesPerPage, orderBy, direction);
+		ArrayList<PedidoDTO> list = new ArrayList<>();
+		
+		 for(Pedido pedido : listPedidos){
+	            list.add(new PedidoDTO(pedido));
+	        }
+		
+				
 		APIResponse result = new APIResponse(list);
 		
-		return ResponseEntity.ok().body(result);
+		return ResponseEntity.ok().body(list);
+	}
+	
+	@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Void> estorno(@PathVariable Integer id) {
+
+		//Pedido obj = service.find(id);
+		
+		service.estornarPagamento(id);
+
+		return ResponseEntity.ok().build();
 	}
 
 }

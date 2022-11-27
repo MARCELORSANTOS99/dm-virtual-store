@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dmvirtualstore.domain.Carrinho;
 import com.dmvirtualstore.domain.Cidade;
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.Endereco;
@@ -23,6 +24,7 @@ import com.dmvirtualstore.domain.enuns.Perfil;
 import com.dmvirtualstore.domain.enuns.TipoCliente;
 import com.dmvirtualstore.dto.ClienteDTO;
 import com.dmvirtualstore.dto.ClienteNewDTO;
+import com.dmvirtualstore.repositories.CarrinhoRepository;
 import com.dmvirtualstore.repositories.ClienteRepository;
 import com.dmvirtualstore.repositories.EnderecoRepository;
 import com.dmvirtualstore.security.UserSS;
@@ -42,6 +44,9 @@ public class ClienteService {
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private CarrinhoRepository carrinhoRepository;
 	
 	@Autowired
 	private BCryptPasswordEncoder pe;
@@ -75,6 +80,7 @@ public class ClienteService {
 	@Transactional
 	public Cliente insert(Cliente obj) {
 		obj.setId(null);
+		carrinhoRepository.save(obj.getCarrinho());
 		obj = repo.save(obj);
 		enderecoRepository.saveAll(obj.getEnderecos());
 		return obj;
@@ -84,10 +90,14 @@ public class ClienteService {
 		
 		Cliente cli = new Cliente(null,objDto.getNome(),objDto.getEmail(),objDto.getCpfOuCnpj(),TipoCliente.toEnum(objDto.getTipo()),pe.encode(objDto.getSenha()));
 		
-
+		
 		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
 		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(),
 				objDto.getBairro(), objDto.getCep(), cli, cid);
+		
+		Carrinho carrinho = new Carrinho(null, cli);
+		
+		cli.setCarrinho(carrinho);
 		cli.getEnderecos().add(end);
 		cli.getTelefones().add(objDto.getTelefone1());
 		if (objDto.getTelefone2() != null) {

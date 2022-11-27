@@ -34,11 +34,26 @@ public class ProdutoService {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 
 
-		List<Categoria> categorias = categoriaRepository.findAllById(ids);
+		if(ids.isEmpty()) {
+			List<Categoria> allCategorias = categoriaRepository.findAll();
+			return repo.findDistinctByNomeContainingAndCategoriasIn(nome, allCategorias, pageRequest);
+		}else {	
+			List<Categoria> categorias = categoriaRepository.findAllById(ids);
+			return repo.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);
+		}
+		
+		
 
-		return repo.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);
+		
 
 
+	}
+	
+	public List<Produto> findAll() {
+
+		repo.findAll();
+
+		return repo.findAll();
 	}
 
 }

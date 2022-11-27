@@ -19,7 +19,7 @@ import com.dmvirtualstore.domain.Produto;
 public interface ProdutoRepository extends JpaRepository <Produto, Integer>{
 	
 	@Transactional(readOnly=true)
-	@Query("SELECT DISTINCT obj FROM Produto obj INNER JOIN obj.categorias cat WHERE obj.title LIKE %:title% AND cat IN :categorias")
+	@Query("SELECT DISTINCT obj FROM Produto obj INNER JOIN obj.categorias cat WHERE LOWER(obj.title) like %:title% AND cat IN :categorias")
 	Page<Produto> findDistinctByNomeContainingAndCategoriasIn( @Param("title")String title,@Param("categorias") List<Categoria> categorias, Pageable pageRequest);
 
 }

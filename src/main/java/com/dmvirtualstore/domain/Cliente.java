@@ -16,7 +16,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -44,9 +43,7 @@ public class Cliente implements Serializable {
 	@JsonIgnore
 	private String senha;
 
-	
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "carrinho_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "cliente")
 	private Carrinho carrinho;
 	
 
@@ -54,7 +51,7 @@ public class Cliente implements Serializable {
 	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
 
-	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL) 
 	private List<Endereco> enderecos = new ArrayList<>();
 
 	@ElementCollection
@@ -158,6 +155,16 @@ public class Cliente implements Serializable {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	
+
+	public Carrinho getCarrinho() {
+		return carrinho;
+	}
+
+	public void setCarrinho(Carrinho carrinho) {
+		this.carrinho = carrinho;
 	}
 
 	@Override

@@ -25,6 +25,7 @@ public class BR {
 	 * @return
 	 */
 	public static boolean isValidCPF(final String ssn) {
+				
 		if ((ssn == null) || (ssn.length() != 11) || ssn.matches(ssn.charAt(0) + "{11}"))
 			return false;
 

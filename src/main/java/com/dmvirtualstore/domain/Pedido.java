@@ -1,6 +1,7 @@
 package com.dmvirtualstore.domain;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +32,9 @@ public class Pedido implements Serializable {
 	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
 	private Date instante;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yy/MM/dd", locale = "pt-BR", timezone = "Brazil/East")
+	private Date vencimento;
+	
 	@OneToOne(cascade=CascadeType.ALL, mappedBy="pedido")
 	private Pagamento pagamento;
 
@@ -43,26 +47,31 @@ public class Pedido implements Serializable {
 	private Endereco enderecoDeEntrega;
 	
 	@OneToMany(mappedBy="id.pedido")
-	private Set<ItemPedido> itens = new HashSet<>();
+	private Set<ItemPedido> items = new HashSet<>();
+	
 	
 	public Pedido() {
 	}
 
-	public Pedido(Integer id, Date instante, Cliente cliente, Endereco enderecoDeEntrega) {
+	public Pedido(Integer id, Date instante, Cliente cliente, Endereco enderecoDeEntrega, Date vencimento) {
 		super();
 		this.id = id;
 		this.instante = instante;
 		this.cliente = cliente;
 		this.enderecoDeEntrega = enderecoDeEntrega;
+		this.vencimento = vencimento;
 	}
 
 	public double getValorTotal() {
 		double soma = 0.0;
-		for (ItemPedido ip : itens) {
+		for (ItemPedido ip : items) {
 			soma = soma + ip.getSubTotal();
 		}
+		
 		return soma;
 	}
+	
+	
 	
 	public Integer getId() {
 		return id;
@@ -105,13 +114,23 @@ public class Pedido implements Serializable {
 	}
 
 	public Set<ItemPedido> getItens() {
-		return itens;
+		return items;
 	}
 
 	public void setItens(Set<ItemPedido> itens) {
-		this.itens = itens;
+		this.items = itens;
 	}
 	
+	
+	
+	public Date getVencimento() {
+		return vencimento;
+	}
+
+	public void setVencimento(Date vencimento) {
+		this.vencimento = vencimento;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

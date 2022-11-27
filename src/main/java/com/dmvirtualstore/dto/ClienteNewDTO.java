@@ -7,11 +7,12 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.services.validation.ClienteInsert;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @ClienteInsert
 public class ClienteNewDTO implements Serializable{
-
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,6 +58,28 @@ public class ClienteNewDTO implements Serializable{
 
 	public ClienteNewDTO() {
 	}
+	
+	
+
+	public ClienteNewDTO(Cliente c, String tkn) {
+		super();
+		this.id = c.getId().toString();
+		this.nome = c.getNome();
+		this.email = c.getEmail();
+		this.cpfOuCnpj = c.getCpfOuCnpj();
+		this.logradouro = c.getEnderecos().get(0).getLogradouro();
+		this.numero = c.getEnderecos().get(0).getNumero();
+		this.complemento = c.getEnderecos().get(0).getComplemento();
+		this.token = tkn;
+		this.bairro = c.getEnderecos().get(0).getBairro();
+		this.cep = c.getEnderecos().get(0).getCep();
+		this.telefone1 = c.getTelefones().iterator().next();
+		this.telefone2 = c.getTelefones().iterator().next();
+		this.telefone3 = c.getTelefones().iterator().next();
+		this.cidadeId = c.getEnderecos().get(0).getCidade().getId();
+	}
+
+
 
 	public String getNome() {
 		return nome;
