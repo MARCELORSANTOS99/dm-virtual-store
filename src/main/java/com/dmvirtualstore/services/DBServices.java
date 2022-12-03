@@ -2,7 +2,6 @@ package com.dmvirtualstore.services;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,22 +131,25 @@ public class DBServices {
 
 			
 		
-		Cliente cli1 = new Cliente(null, "Debora Mendes", "marcelo.r.santos99@hotmail.com", "92598650000", TipoCliente.PESSOAFISICA,pe.encode("123"));
+		Cliente cli1 = new Cliente(null, "Debora Mendes", "marcelo.r.santos99@hotmail.com", "92598650000", TipoCliente.PESSOAFISICA,pe.encode("123"),"Rua Zike Tuma", "118","bl2", "Jd Ubirajara", "04458-000","São Paulo", "SP");
 		cli1.getTelefones().addAll(Arrays.asList("11-98564841","11-56663985"));
 		
 		
-		Cliente cli2 = new Cliente(null, "Marcelo Santos", "marcelo.badjoca@gmail.com", "89501493032", TipoCliente.PESSOAFISICA,pe.encode("123456"));
+		Cliente cli2 = new Cliente(null, "Marcelo Santos", "marcelo.badjoca@gmail.com", "89501493032", TipoCliente.PESSOAFISICA,pe.encode("123456"),"Rua Sobe e desce", "39", "bl1", "Jd Umbuiá", "04777-000", "Bahia", "BA");
 		cli2.addPerfil(Perfil.ADMIN);
 		cli2.getTelefones().addAll(Arrays.asList("11-98564841","11-56663985"));
 		
 
+		
 		Endereco e1 = new Endereco(null, "Rua Zike Tuma", "118", "bl2", "Jd Ubirajara", "04458-000", cli1, c2);
 		Endereco e2 = new Endereco(null, "Rua Sobe e desce", "39", "bl1", "Jd Umbuiá", "04777-000", cli1, c3);
 		Endereco e3 = new Endereco(null, "R Floriano", "39", "bl1", "Jd Umbuiá", "04777-000", cli2, c3);
 
 
+		/*
 		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
 		cli2.getEnderecos().addAll(Arrays.asList(e3));
+		*/
 		
 		
 		Carrinho cart1 = new Carrinho(null, cli1);
@@ -173,8 +175,27 @@ public class DBServices {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); 
 
 
-		Pedido ped1 = new Pedido(null, sdf.parse("12/02/2022 06:34"),cli2,e1,sdf.parse("31/12/2022 06:34"));
-		Pedido ped2 = new Pedido(null, sdf.parse("08/02/2022 15:34"),cli2,e2,sdf.parse("31/12/2022 06:34"));
+		Pedido ped1 = new Pedido(
+				null,
+				sdf.parse("12/02/2022 06:34"),
+				cli2,
+				e1,
+				sdf.parse("31/12/2022 06:34"),
+				cli2.getLogradouro(),
+				cli2.getNumero(),
+				cli2.getComplemento(),
+				cli2.getBairro(),
+				cli2.getCep(),
+				cli2.getLocalidade(),
+				cli2.getUf()
+				);
+		Pedido ped2 = new Pedido(null, sdf.parse("08/02/2022 15:34"),cli2,e2,sdf.parse("31/12/2022 06:34"),cli2.getLogradouro(),
+				cli2.getNumero(),
+				cli2.getComplemento(),
+				cli2.getBairro(),
+				cli2.getCep(),
+				cli2.getLocalidade(),
+				cli2.getUf());
 		
 		cli2.setCarrinho(cart2);
 		carrinhoRepository.save(cart2);

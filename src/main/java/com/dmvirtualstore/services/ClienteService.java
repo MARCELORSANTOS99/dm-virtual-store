@@ -17,16 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dmvirtualstore.domain.Carrinho;
-import com.dmvirtualstore.domain.Cidade;
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.Endereco;
+import com.dmvirtualstore.domain.ViaCep;
 import com.dmvirtualstore.domain.enuns.Perfil;
 import com.dmvirtualstore.domain.enuns.TipoCliente;
 import com.dmvirtualstore.dto.ClienteDTO;
 import com.dmvirtualstore.dto.ClienteNewDTO;
+import com.dmvirtualstore.dto.EnderecoDTO;
+import com.dmvirtualstore.feign.client.FeignClientViaCep;
 import com.dmvirtualstore.repositories.CarrinhoRepository;
 import com.dmvirtualstore.repositories.ClienteRepository;
-import com.dmvirtualstore.repositories.EnderecoRepository;
 import com.dmvirtualstore.security.UserSS;
 import com.dmvirtualstore.services.exception.AuthorizationException;
 import com.dmvirtualstore.services.exception.DataIntegrityException;
@@ -41,9 +42,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repo;
-
+	
 	@Autowired
-	private EnderecoRepository enderecoRepository;
+	private FeignClientViaCep clientViaCep;
 	
 	@Autowired
 	private CarrinhoRepository carrinhoRepository;
@@ -79,26 +80,22 @@ public class ClienteService {
 
 	@Transactional
 	public Cliente insert(Cliente obj) {
+		System.out.println("Signup-> " + obj.getComplemento());
 		obj.setId(null);
 		carrinhoRepository.save(obj.getCarrinho());
 		obj = repo.save(obj);
-		enderecoRepository.saveAll(obj.getEnderecos());
 		return obj;
 	}
 
 	public Cliente fromDTO(ClienteNewDTO objDto) {
 		
-		Cliente cli = new Cliente(null,objDto.getNome(),objDto.getEmail(),objDto.getCpfOuCnpj(),TipoCliente.toEnum(objDto.getTipo()),pe.encode(objDto.getSenha()));
+		Cliente cli = new Cliente(null,objDto.getNome(),objDto.getEmail(),objDto.getCpfOuCnpj(),TipoCliente.toEnum(objDto.getTipo()),pe.encode(objDto.getSenha()),objDto.getLogradouro(),objDto.getNumero(),objDto.getComplemento(),objDto.getBairro(),objDto.getCep(),objDto.getLocalidade(),objDto.getUf());
 		
-		
-		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
-		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(),
-				objDto.getBairro(), objDto.getCep(), cli, cid);
 		
 		Carrinho carrinho = new Carrinho(null, cli);
 		
 		cli.setCarrinho(carrinho);
-		cli.getEnderecos().add(end);
+		
 		cli.getTelefones().add(objDto.getTelefone1());
 		if (objDto.getTelefone2() != null) {
 			cli.getTelefones().add(objDto.getTelefone2());
@@ -111,15 +108,16 @@ public class ClienteService {
 	
 	public Cliente fromDTO(ClienteDTO objDto) {
 
-		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null, null);
+		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null, null, null, null, null, null, null, null, null);
 
 
 	}
 	
-	public Cliente update(Cliente obj) {
+	public Cliente update(Cliente obj, boolean atualizarEndereco) {
 
 		Cliente newObj = find(obj.getId());
 		updateData(newObj,obj);
+		
 
 		return repo.save(newObj);
 	}
@@ -139,6 +137,21 @@ public class ClienteService {
 		}
 
 	}
+	
+	
+	public void buscarEnderecoViaCep(String cep) {
+		
+		ViaCep viaCep = clientViaCep.buscarEndereco(cep);
+		
+		Endereco end = new Endereco();
+		
+		end.setCep(viaCep.getCep());
+		end.setLogradouro(viaCep.getLogradouro());
+		end.setBairro(viaCep.getBairro());
+		end.setBairro(viaCep.getBairro());
+		
+
+}
 
 	public List<Cliente> findAll() {
 		repo.findAll();
@@ -170,9 +183,23 @@ public class ClienteService {
 
 
 	private void updateData(Cliente newObj, Cliente obj) {
-
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
+	
+	public Cliente updateEndereco(Cliente obj, EnderecoDTO endereco) {
+		
+		if(endereco.getComplemento() !=null && !endereco.getComplemento().isEmpty()) {
+			obj.setCep(endereco.getComplemento());
+		}
+		
+		obj.setBairro(endereco.getBairro());
+		obj.setCep(endereco.getCep());
+		obj.setLocalidade(endereco.getLocalidade());
+		obj.setNumero(endereco.getNumero());
+		
+		return repo.save(obj);
+
 	}
 	
 public URI uploadPrfilePicture(MultipartFile multipartFile) {
@@ -193,5 +220,7 @@ public URI uploadPrfilePicture(MultipartFile multipartFile) {
 		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 		
 	}
+
+
 
 }

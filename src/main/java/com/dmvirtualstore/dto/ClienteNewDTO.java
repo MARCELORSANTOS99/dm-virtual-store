@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.Length;
 
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.services.validation.ClienteInsert;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @ClienteInsert
 public class ClienteNewDTO implements Serializable{
@@ -43,7 +42,7 @@ public class ClienteNewDTO implements Serializable{
 	
 	private String token;
 	
-	
+	@NotEmpty(message = "Prenchimento obrigatório")
 	private String bairro;
 	
 	@NotEmpty(message = "Prenchimento obrigatório")
@@ -54,7 +53,11 @@ public class ClienteNewDTO implements Serializable{
 	private String telefone2;
 	private String telefone3;
 
-	private Integer cidadeId;
+	@NotEmpty(message = "Prenchimento obrigatório")
+	private String localidade;
+	
+	@NotEmpty(message = "Prenchimento obrigatório")
+	private String uf;
 
 	public ClienteNewDTO() {
 	}
@@ -67,16 +70,17 @@ public class ClienteNewDTO implements Serializable{
 		this.nome = c.getNome();
 		this.email = c.getEmail();
 		this.cpfOuCnpj = c.getCpfOuCnpj();
-		this.logradouro = c.getEnderecos().get(0).getLogradouro();
-		this.numero = c.getEnderecos().get(0).getNumero();
-		this.complemento = c.getEnderecos().get(0).getComplemento();
+		this.logradouro = c.getLogradouro();
+		this.numero = c.getNumero();
+		this.complemento = c.getComplemento();
 		this.token = tkn;
-		this.bairro = c.getEnderecos().get(0).getBairro();
-		this.cep = c.getEnderecos().get(0).getCep();
+		this.bairro = c.getBairro();
+		this.cep = c.getCep();
 		this.telefone1 = c.getTelefones().iterator().next();
 		this.telefone2 = c.getTelefones().iterator().next();
 		this.telefone3 = c.getTelefones().iterator().next();
-		this.cidadeId = c.getEnderecos().get(0).getCidade().getId();
+		this.localidade = c.getLocalidade();
+		this.uf = c.getUf();
 	}
 
 
@@ -177,13 +181,33 @@ public class ClienteNewDTO implements Serializable{
 		this.telefone3 = telefone3;
 	}
 
-	public Integer getCidadeId() {
-		return cidadeId;
+	
+
+	public String getLocalidade() {
+		return localidade;
 	}
 
-	public void setCidadeId(Integer cidadeId) {
-		this.cidadeId = cidadeId;
+
+
+	public void setLocalidade(String localidade) {
+		this.localidade = localidade;
 	}
+	
+	
+
+
+
+	public String getUf() {
+		return uf;
+	}
+
+
+
+	public void setUf(String uf) {
+		this.uf = uf;
+	}
+
+
 
 	public String getSenha() {
 		return senha;

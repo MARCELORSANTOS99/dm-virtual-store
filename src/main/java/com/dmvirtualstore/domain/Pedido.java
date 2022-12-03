@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -49,10 +50,25 @@ public class Pedido implements Serializable {
 	@OneToMany(mappedBy="id.pedido")
 	private Set<ItemPedido> items = new HashSet<>();
 	
+	private String logradouro;
+	
+	private String numero;
+	
+	private String complemento;
+	
+	private String bairro;
+	
+	private String cep;
+	
+	private String localidade;
+	
+	private String uf;
+	
 	
 	public Pedido() {
 	}
 
+	/*
 	public Pedido(Integer id, Date instante, Cliente cliente, Endereco enderecoDeEntrega, Date vencimento) {
 		super();
 		this.id = id;
@@ -60,6 +76,39 @@ public class Pedido implements Serializable {
 		this.cliente = cliente;
 		this.enderecoDeEntrega = enderecoDeEntrega;
 		this.vencimento = vencimento;
+		
+	}
+	*/
+	
+	
+
+	public Pedido(
+			Integer id,
+			Date instante,
+			Cliente cliente,
+			Endereco enderecoDeEntrega,
+			Date vencimento,
+			String logradouro,
+			String numero,
+			String complemento,
+			String bairro,
+			String cep,
+			String localidade,
+			String uf
+			) {
+		super();
+		this.id = id;
+		this.instante = instante;
+		this.vencimento = vencimento;
+		this.cliente = cliente;
+		this.enderecoDeEntrega = enderecoDeEntrega;
+		this.logradouro = logradouro;
+		this.numero = numero;
+		this.complemento = complemento;
+		this.bairro = bairro;
+		this.cep = cep;
+		this.localidade = localidade;
+		this.uf = uf;
 	}
 
 	public double getValorTotal() {
@@ -129,6 +178,64 @@ public class Pedido implements Serializable {
 
 	public void setVencimento(Date vencimento) {
 		this.vencimento = vencimento;
+	}
+	
+	
+
+	public String getLogradouro() {
+		return logradouro;
+	}
+
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	public String getNumero() {
+		return numero;
+	}
+
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+
+	public String getComplemento() {
+		return complemento;
+	}
+
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	public String getLocalidade() {
+		return localidade;
+	}
+
+	public void setLocalidade(String localidade) {
+		this.localidade = localidade;
+	}
+
+	public String getUf() {
+		return uf;
+	}
+
+	public void setUf(String uf) {
+		this.uf = uf;
 	}
 
 	@Override
