@@ -58,6 +58,9 @@ public class PedidoService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private FreteService freteService;
 
 	
 
@@ -84,6 +87,9 @@ public class PedidoService {
 		obj.setLocalidade(obj.getCliente().getLocalidade());
 		obj.setUf(obj.getCliente().getUf());
 		
+		
+		//CALCULAR FRETE
+		obj.setFrete(freteService.calcularFrete(obj.getCliente().getCep()));
 		
 		
 		obj = repo.save(obj);

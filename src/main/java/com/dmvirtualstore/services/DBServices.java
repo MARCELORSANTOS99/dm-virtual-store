@@ -15,6 +15,7 @@ import com.dmvirtualstore.domain.Cidade;
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.Endereco;
 import com.dmvirtualstore.domain.Estado;
+import com.dmvirtualstore.domain.Frete;
 import com.dmvirtualstore.domain.ItemPedido;
 import com.dmvirtualstore.domain.Pagamento;
 import com.dmvirtualstore.domain.PagamentoComBoleto;
@@ -31,6 +32,7 @@ import com.dmvirtualstore.repositories.CidadeRepository;
 import com.dmvirtualstore.repositories.ClienteRepository;
 import com.dmvirtualstore.repositories.EnderecoRepository;
 import com.dmvirtualstore.repositories.EstadoRepository;
+import com.dmvirtualstore.repositories.FreteRepository;
 import com.dmvirtualstore.repositories.ItemPedidoRepository;
 import com.dmvirtualstore.repositories.PagamentoRepository;
 import com.dmvirtualstore.repositories.PedidoRepository;
@@ -74,6 +76,9 @@ public class DBServices {
 	private CarrinhoItemRepository carrinhoItemRepository ;
 	
 	@Autowired
+	private FreteRepository freteReposistory;
+	
+	@Autowired
 	private BCryptPasswordEncoder pe;
 	
 	public void instatiateTestDataBase() throws ParseException {
@@ -85,6 +90,7 @@ public class DBServices {
 		Categoria cat5 = new Categoria(null, "Ouro Rosé");
 		Categoria cat6 = new Categoria(null, "Anéis Masculino");
 		Categoria cat7 = new Categoria(null, "Infantis");
+		
 		
 		Produto p1 = new Produto(null, "ANEL CRISTAL", 129.90, "ANEL CRISTAL VERDE EM PRATA 925 ESTERLINA - REGULÁVEL", "un", "https://images.yampi.me/assets/stores/oculosnow/uploads/images/anel-cristal-verde-em-prata-925-esterlina-regulavel-61983f365217a-medium.png");
 		Produto p2 = new Produto(null, "Colar com Pingente", 109.90, "O colar com pingente coração 3D em ouro 18k é para todos os apaixonados, além de cair bem com todos os looks, pois é uma peça com pingente clássico!", "un", "https://virtualjoias.com/media/catalog/product/cache/2606ad8a2e237282be5631f3e1487bf0/c/o/colar-com-pingente-de-coracao-ouro-18k.jpg?quality=100");
@@ -107,7 +113,12 @@ public class DBServices {
 		p6.getCategorias().addAll(Arrays.asList(cat6,cat1));
 		p7.getCategorias().addAll(Arrays.asList(cat7,cat1));
 		
+		Frete frete1 = new Frete("SP Capital","SP",1000,5999,5.0);
+		Frete frete2 = new Frete("RJ Capital","RJ",20000,23799,5.0);
 		
+		
+		
+		freteReposistory.saveAll(Arrays.asList(frete1,frete2));
 
 
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2, cat3,cat4,cat5,cat6,cat7));
@@ -189,6 +200,9 @@ public class DBServices {
 				cli2.getLocalidade(),
 				cli2.getUf()
 				);
+		
+		ped1.setFrete(frete1.getValor());
+	
 		Pedido ped2 = new Pedido(null, sdf.parse("08/02/2022 15:34"),cli2,e2,sdf.parse("31/12/2022 06:34"),cli2.getLogradouro(),
 				cli2.getNumero(),
 				cli2.getComplemento(),
@@ -196,6 +210,7 @@ public class DBServices {
 				cli2.getCep(),
 				cli2.getLocalidade(),
 				cli2.getUf());
+		ped2.setFrete(frete1.getValor());
 		
 		cli2.setCarrinho(cart2);
 		carrinhoRepository.save(cart2);

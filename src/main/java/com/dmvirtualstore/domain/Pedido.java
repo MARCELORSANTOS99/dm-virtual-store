@@ -1,7 +1,6 @@
 package com.dmvirtualstore.domain;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -63,6 +61,8 @@ public class Pedido implements Serializable {
 	private String localidade;
 	
 	private String uf;
+	
+	private	Double frete;
 	
 	
 	public Pedido() {
@@ -116,6 +116,8 @@ public class Pedido implements Serializable {
 		for (ItemPedido ip : items) {
 			soma = soma + ip.getSubTotal();
 		}
+		
+		soma = soma + frete;
 		
 		return soma;
 	}
@@ -236,6 +238,15 @@ public class Pedido implements Serializable {
 
 	public void setUf(String uf) {
 		this.uf = uf;
+	}
+	
+	
+	public Double getFrete() {
+		return frete;
+	}
+
+	public void setFrete(Double frete) {
+		this.frete = frete;
 	}
 
 	@Override

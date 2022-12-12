@@ -31,6 +31,7 @@ public class PedidoDTO implements Serializable {
 	private String copiaecola;
 	private String qrCodeImage;
 	private Double total;
+	private Double frete;
 	private String pagamento;
 	private String formaPagamento;
 	private String numeroCartao;
@@ -76,6 +77,7 @@ public class PedidoDTO implements Serializable {
 		
 		
 		this.total = obj.getValorTotal();
+		this.frete = obj.getFrete();
 		this.pagamento = obj.getPagamento().getEstado().getDescricao();
 		
 	}
@@ -221,6 +223,20 @@ public class PedidoDTO implements Serializable {
 
 	public EnderecoDTO getEndereco() {
 		return endereco;
+	}
+	
+	
+
+
+
+	public Double getFrete() {
+		return frete;
+	}
+
+
+
+	public void setFrete(Double frete) {
+		this.frete = frete;
 	}
 
 
