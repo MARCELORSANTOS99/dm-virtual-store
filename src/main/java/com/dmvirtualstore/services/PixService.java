@@ -1,8 +1,6 @@
 package com.dmvirtualstore.services;
 
-import java.text.DecimalFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +9,8 @@ import com.dmvirtualstore.domain.Identification;
 import com.dmvirtualstore.domain.MercadoPagoData;
 import com.dmvirtualstore.domain.MercadoPagoRequest;
 import com.dmvirtualstore.domain.PagamentoComPix;
-import com.dmvirtualstore.domain.Payer;
 import com.dmvirtualstore.domain.PayerRequest;
 import com.dmvirtualstore.domain.Pedido;
-import com.dmvirtualstore.domain.Phone;
 import com.dmvirtualstore.domain.StatusPaymentPix;
 import com.dmvirtualstore.feign.client.FeignClientData;
 

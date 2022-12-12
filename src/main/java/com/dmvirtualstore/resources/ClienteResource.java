@@ -21,8 +21,11 @@ import com.dmvirtualstore.domain.APIResponse;
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.dto.ClienteDTO;
 import com.dmvirtualstore.dto.ClienteNewDTO;
+import com.dmvirtualstore.dto.EnderecoDTO;
 import com.dmvirtualstore.security.JWTUtil;
+import com.dmvirtualstore.security.UserSS;
 import com.dmvirtualstore.services.ClienteService;
+import com.dmvirtualstore.services.UserService;
 
 @RestController
 @RequestMapping(value="/clientes")
@@ -70,7 +73,7 @@ public class ClienteResource {
 		objDto.setToken(sb.toString());
 		objDto.setId(obj.getId().toString());;
 		
-		APIResponse result = new APIResponse(obj);
+		//APIResponse result = new APIResponse(obj);
 		
 		
 		return ResponseEntity.ok().body(objDto);
@@ -82,7 +85,19 @@ public class ClienteResource {
 		Cliente obj = service.fromDTO(objDto);
 
 		obj.setId(id);
-		obj = service.update(obj);
+		obj = service.update(obj, false);
+
+		return ResponseEntity.noContent().build();
+		}
+	
+	@RequestMapping(value = "/endereco", method=RequestMethod.PUT)
+	public ResponseEntity<Void> updateEndereco(@Valid @RequestBody EnderecoDTO objDto){
+
+		UserSS user = UserService.authenticated();
+			
+		Cliente obj = service.findByEmail(user.getUsername());
+
+		obj = service.updateEndereco(obj,objDto);
 
 		return ResponseEntity.noContent().build();
 		}

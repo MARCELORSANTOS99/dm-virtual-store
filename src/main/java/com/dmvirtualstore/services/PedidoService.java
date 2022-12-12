@@ -58,6 +58,9 @@ public class PedidoService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private FreteService freteService;
 
 	
 
@@ -69,13 +72,25 @@ public class PedidoService {
 	
 	
 	public Pedido insert(Pedido obj) {
-		
+			
 		obj.setId(null);
 		obj.setInstante(new Date());
 		obj.setVencimento(new Date());
 		obj.setCliente(clienteService.find(obj.getCliente().getId()));
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
+		obj.setLogradouro(obj.getCliente().getLogradouro());
+		obj.setNumero(obj.getCliente().getNumero());
+		obj.setComplemento(obj.getCliente().getComplemento());
+		obj.setBairro(obj.getCliente().getBairro());
+		obj.setCep(obj.getCliente().getCep());
+		obj.setLocalidade(obj.getCliente().getLocalidade());
+		obj.setUf(obj.getCliente().getUf());
+		
+		
+		//CALCULAR FRETE
+		obj.setFrete(freteService.calcularFrete(obj.getCliente().getCep()));
+		
 		
 		obj = repo.save(obj);
 		
@@ -126,41 +141,54 @@ public class PedidoService {
 		return repo.findByCliente(cliente, pageRequest);
 	}
 	
-	public void estornarPagamento(Integer id) {
+	public boolean estornarPagamento(Integer id, Cliente cliente) {
 		Optional<Pedido> obj = repo.findById(id);
+		System.out.println(obj.get().getCliente().getId());
+		System.out.println(cliente.getId());
 		
-		
-		try {
-			if (obj.get().getPagamento() instanceof PagamentoComPix) {
-				System.out.println("<< 1>> ");
-				PagamentoComPix pagto = (PagamentoComPix) obj.get().getPagamento();
-				System.out.println("<< 2>> ");
-				pixService.estornoPagamentoPix(pagto.getIdPagamentoPix());
-				System.out.println("<< 7>> ");
-				System.out.println(obj.get().getPagamento().getEstado());
-				obj.get().getPagamento().setEstado(EstadoPagamento.CANCELADO);
-				System.out.println(obj.get().getPagamento().getEstado());
-				pagamentoRepository.save(obj.get().getPagamento());
-			}
+		if(obj.get().getCliente().getId() == cliente.getId()) {
 			
-			if (obj.get().getPagamento() instanceof PagamentoComCartao) {
-				System.out.println("<< 1>> ");
-				PagamentoComCartao pagto = (PagamentoComCartao) obj.get().getPagamento();
-				System.out.println("<< 2>> ");
-				cartaoService.estornarPagamentoCartao(pagto);
-				System.out.println("<< 7>> ");
-				System.out.println(obj.get().getPagamento().getEstado());
-				obj.get().getPagamento().setEstado(EstadoPagamento.CANCELADO);
-				System.out.println(obj.get().getPagamento().getEstado());
-				pagamentoRepository.save(obj.get().getPagamento());
+			try {
+				if (obj.get().getPagamento() instanceof PagamentoComPix) {
+					System.out.println("<< 1>> ");
+					PagamentoComPix pagto = (PagamentoComPix) obj.get().getPagamento();
+					System.out.println("<< 2>> ");
+					pixService.estornoPagamentoPix(pagto.getIdPagamentoPix());
+					System.out.println("<< 7>> ");
+					System.out.println(obj.get().getPagamento().getEstado());
+					obj.get().getPagamento().setEstado(EstadoPagamento.CANCELADO);
+					System.out.println(obj.get().getPagamento().getEstado());
+					pagamentoRepository.save(obj.get().getPagamento());
+				}
+				
+				if (obj.get().getPagamento() instanceof PagamentoComCartao) {
+					System.out.println("<< 1>> ");
+					PagamentoComCartao pagto = (PagamentoComCartao) obj.get().getPagamento();
+					System.out.println("<< 2>> ");
+					cartaoService.estornarPagamentoCartao(pagto);
+					System.out.println("<< 7>> ");
+					System.out.println(obj.get().getPagamento().getEstado());
+					obj.get().getPagamento().setEstado(EstadoPagamento.CANCELADO);
+					System.out.println(obj.get().getPagamento().getEstado());
+					pagamentoRepository.save(obj.get().getPagamento());
 
-			}
-		
+				}
+				return true;
 			
-		} catch (FeignClientException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			} catch (FeignClientException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+			
+		}else {
+			return false;
 		}
+
+		
+		
+		
 		
 		
 		 

@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dmvirtualstore.domain.APIResponse;
+import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.dto.PedidoDTO;
+import com.dmvirtualstore.security.UserSS;
+import com.dmvirtualstore.services.ClienteService;
 import com.dmvirtualstore.services.PedidoService;
+import com.dmvirtualstore.services.UserService;
 
 @RestController
 @RequestMapping(value="/pedidos")
@@ -28,6 +32,9 @@ public class PedidoResource {
 
 	@Autowired
 	private PedidoService service;
+	
+	@Autowired
+	private ClienteService clienteService;
 
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public ResponseEntity<APIResponse> find(@PathVariable Integer id) {
@@ -76,12 +83,19 @@ public class PedidoResource {
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> estorno(@PathVariable Integer id) {
-
-		//Pedido obj = service.find(id);
+	
+		//Valida se o cliente autenticado é o mesmo do pedido
+		UserSS user = UserService.authenticated();
+		Cliente cliente = clienteService.findByEmail(user.getUsername());
 		
-		service.estornarPagamento(id);
-
-		return ResponseEntity.ok().build();
+		if(service.estornarPagamento(id,cliente)) {
+			
+			return ResponseEntity.ok().build();
+		}else {
+			return ResponseEntity.badRequest().build();	
+		}
+		
+		
 	}
 
 }

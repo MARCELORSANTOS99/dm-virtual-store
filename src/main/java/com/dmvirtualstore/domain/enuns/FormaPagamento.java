@@ -3,7 +3,7 @@ package com.dmvirtualstore.domain.enuns;
 public enum FormaPagamento {
 
 	PIX(0,"Pix"),
-	CARTAO(1,"Cartao");
+	CARTAO(1,"Cartão");
 	
 
 	private int cod; 

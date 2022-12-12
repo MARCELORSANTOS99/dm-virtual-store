@@ -31,10 +31,12 @@ public class PedidoDTO implements Serializable {
 	private String copiaecola;
 	private String qrCodeImage;
 	private Double total;
+	private Double frete;
 	private String pagamento;
 	private String formaPagamento;
 	private String numeroCartao;
 	private String bandeira;
+	private EnderecoDTO endereco;
 		
 
 	public PedidoDTO(Pedido obj) {
@@ -61,7 +63,21 @@ public class PedidoDTO implements Serializable {
 		
 		
 		
+		
+		
+		this.endereco = new EnderecoDTO(
+				obj.getLogradouro(),
+				obj.getNumero(),
+				obj.getComplemento(),
+				obj.getBairro(),
+				obj.getCep(),
+				obj.getLocalidade(),
+				obj.getUf()
+				);
+		
+		
 		this.total = obj.getValorTotal();
+		this.frete = obj.getFrete();
 		this.pagamento = obj.getPagamento().getEstado().getDescricao();
 		
 	}
@@ -146,6 +162,8 @@ public class PedidoDTO implements Serializable {
 	public Double getTotal() {
 		return total;
 	}
+	
+	
 
 
 
@@ -200,6 +218,35 @@ public class PedidoDTO implements Serializable {
 	public void setBandeira(String bandeira) {
 		this.bandeira = bandeira;
 	}
+
+
+
+	public EnderecoDTO getEndereco() {
+		return endereco;
+	}
+	
+	
+
+
+
+	public Double getFrete() {
+		return frete;
+	}
+
+
+
+	public void setFrete(Double frete) {
+		this.frete = frete;
+	}
+
+
+
+	public void setEndereco(EnderecoDTO endereco) {
+		this.endereco = endereco;
+	}
+
+
+
 	
 	
 
