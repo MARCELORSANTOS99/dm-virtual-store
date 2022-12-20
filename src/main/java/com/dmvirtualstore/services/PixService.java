@@ -3,6 +3,7 @@ package com.dmvirtualstore.services;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.dmvirtualstore.domain.Identification;
@@ -22,6 +23,10 @@ public class PixService {
 
 	@Autowired
 	FeignClientData mercadoPagoClient;
+	
+	@Value("${spring.mercadopago.token}")
+	private String token;
+	
 
 	public void preencherPagamentoComPix(PagamentoComPix pagto, Pedido obj) {
 		System.out.println("<< 4>> ");
@@ -43,7 +48,7 @@ public class PixService {
 		System.out.println("");
 	
 		
-		MercadoPagoData m = mercadoPagoClient.checkOutPix("Bearer TEST-5372134168916464-111117-be645e8977177fe3644d88612ef5f8d1-63517358",request);
+		MercadoPagoData m = mercadoPagoClient.checkOutPix(token,request);
 		System.out.println(m.getId());
 		System.out.println(m.getPayment_method_id());
 		System.out.println("<< 6>> ");

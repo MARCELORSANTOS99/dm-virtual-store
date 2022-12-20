@@ -13,12 +13,12 @@ import com.dmvirtualstore.domain.Carrinhoitem;
 public interface CarrinhoItemRepository extends JpaRepository <Carrinhoitem, Integer>{
 	
 	
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	@Modifying
 	@Query("delete from Carrinhoitem b where b.quantity=0")
 	Integer deleteWithZero();
 	
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	@Modifying
 	@Query("delete from Carrinhoitem b where b.quantity>0")
 	Integer cleanCarrinho();
