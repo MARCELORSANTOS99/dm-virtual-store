@@ -3,6 +3,7 @@ package com.dmvirtualstore.services;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.dmvirtualstore.domain.CieloRequest;
@@ -24,6 +25,12 @@ public class CartaoService {
 
 	@Autowired
 	FeignClientDataCielo cieloClient;
+	
+	@Value("${spring.cielo.merchant.id}")
+	private String merchantId;
+	
+	@Value("${spring.cielo.merchant.key}")
+	private String merchantKey;
 
 	public void pagamentoComCartao(PagamentoComCartao pagto, Pedido obj) {
 		
@@ -42,7 +49,7 @@ public class CartaoService {
 		
 		try {
 						
-			CieloResponsePayment response = cieloClient.checkOutCartao("a15b7095-9b04-4407-839d-0b742488dbf7", "HBYYGLYBBRRPBHHFXIHLKRCMGPKBBNJKRGYBRATX", cieloRequest);
+			CieloResponsePayment response = cieloClient.checkOutCartao(merchantId, merchantKey, cieloRequest);
 			
 			System.out.println("<< 4-c>> ");
 			
