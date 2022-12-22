@@ -1,6 +1,7 @@
 package com.dmvirtualstore.feign.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,5 +20,9 @@ public interface FeignClientData {
 
 	@PutMapping("/payments/{idPagamentoPix}")
 	MercadoPagoData estornarPix(@RequestHeader("Authorization")String token, @PathVariable Integer idPagamentoPix, @RequestBody StatusPaymentPix status);
+	
+	@GetMapping("/payments/{idPagamentoPix}")
+	MercadoPagoData statusPagamentoPix(@RequestHeader("Authorization")String token, @PathVariable Integer idPagamentoPix);
+
 
 }

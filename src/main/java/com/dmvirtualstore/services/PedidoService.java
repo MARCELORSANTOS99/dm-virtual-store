@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.dmvirtualstore.domain.Cliente;
 import com.dmvirtualstore.domain.ItemPedido;
+import com.dmvirtualstore.domain.NotificacaoMercadoPago;
 import com.dmvirtualstore.domain.Pagamento;
 import com.dmvirtualstore.domain.PagamentoComBoleto;
 import com.dmvirtualstore.domain.PagamentoComCartao;
@@ -18,6 +19,7 @@ import com.dmvirtualstore.domain.PagamentoComPix;
 import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.domain.enuns.EstadoPagamento;
 import com.dmvirtualstore.repositories.ItemPedidoRepository;
+import com.dmvirtualstore.repositories.PagamentoPixRepository;
 import com.dmvirtualstore.repositories.PagamentoRepository;
 import com.dmvirtualstore.repositories.PedidoRepository;
 import com.dmvirtualstore.security.UserSS;
@@ -46,6 +48,9 @@ public class PedidoService {
 
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	
+	@Autowired
+	private PagamentoPixRepository pagamentoPixRepository;
 
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
@@ -187,12 +192,31 @@ public class PedidoService {
 		}
 
 		
-		
-		
-		
-		
 		 
 	}
 	
+	public void pixNotificacao(NotificacaoMercadoPago objMercadoPago) { 
+		
+		 PagamentoComPix obj = pagamentoPixRepository.findByIdPagamentoPix(Integer.parseInt(objMercadoPago.getData().getId()));
+	
+		 
+		String status = pixService.statusPagamentoPix(obj);
+		System.out.println(status);	
+		 
+		 if(status.equals("approved")) {
+			 
+				System.out.println(obj.getPedido().getPagamento().getEstado());
+				obj.getPedido().getPagamento().setEstado(EstadoPagamento.PREPARACAO);
+				pagamentoRepository.save(obj.getPedido().getPagamento());
+				
+		 }else if(status.equals("cancelled")) {
+			 
+				System.out.println(obj.getPedido().getPagamento().getEstado());
+				obj.getPedido().getPagamento().setEstado(EstadoPagamento.CANCELADO);
+				pagamentoRepository.save(obj.getPedido().getPagamento());
+		 }
+
+		 	
+	}
 
 }

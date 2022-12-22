@@ -13,6 +13,7 @@ import com.dmvirtualstore.domain.PagamentoComPix;
 import com.dmvirtualstore.domain.PayerRequest;
 import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.domain.StatusPaymentPix;
+import com.dmvirtualstore.domain.enuns.EstadoPagamento;
 import com.dmvirtualstore.feign.client.FeignClientData;
 
 
@@ -68,6 +69,16 @@ public class PixService {
 		
 		
 		MercadoPagoData m = mercadoPagoClient.estornarPix("Bearer TEST-5372134168916464-111117-be645e8977177fe3644d88612ef5f8d1-63517358",idPagamentoPix,status);
+		
+	}
+	
+	
+public String statusPagamentoPix(PagamentoComPix obj) {
+
+		MercadoPagoData m = mercadoPagoClient.statusPagamentoPix("Bearer TEST-5372134168916464-111117-be645e8977177fe3644d88612ef5f8d1-63517358",obj.getIdPagamentoPix());
+		
+		return m.getStatus();
+		
 		
 	}
 	

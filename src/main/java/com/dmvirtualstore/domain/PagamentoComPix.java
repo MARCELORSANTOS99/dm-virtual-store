@@ -79,6 +79,23 @@ public class PagamentoComPix  extends Pagamento{
 	public void setQrCodeImage(String qrCodeImage) {
 		this.qrCodeImage = qrCodeImage;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PagamentoComPix [idPagamentoPix=");
+		builder.append(idPagamentoPix);
+		builder.append(", dataVencimento=");
+		builder.append(dataVencimento);
+		builder.append(", dataPagamento=");
+		builder.append(dataPagamento);
+		builder.append(", copiaEcola=");
+		builder.append(copiaEcola);
+		builder.append(", qrCodeImage=");
+		builder.append(qrCodeImage);
+		builder.append("]");
+		return builder.toString();
+	}
 	
 	
 

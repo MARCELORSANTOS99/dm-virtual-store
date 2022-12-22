@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.dmvirtualstore.domain.APIResponse;
 import com.dmvirtualstore.domain.Cliente;
+import com.dmvirtualstore.domain.NotificacaoMercadoPago;
 import com.dmvirtualstore.domain.Pedido;
 import com.dmvirtualstore.dto.PedidoDTO;
 import com.dmvirtualstore.security.UserSS;
@@ -76,7 +77,7 @@ public class PedidoResource {
 	        }
 		
 				
-		APIResponse result = new APIResponse(list);
+		//APIResponse result = new APIResponse(list);
 		
 		return ResponseEntity.ok().body(list);
 	}
@@ -94,6 +95,15 @@ public class PedidoResource {
 		}else {
 			return ResponseEntity.badRequest().build();	
 		}
+		
+		
+	}
+	
+	
+	@RequestMapping(value = "/notification", method=RequestMethod.POST)
+	public void notificacaoPagamentoPix(@RequestBody NotificacaoMercadoPago obj) {
+
+		service.pixNotificacao(obj);
 		
 		
 	}
