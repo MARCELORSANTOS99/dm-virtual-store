@@ -35,6 +35,8 @@ public class Carrinho implements Serializable{
 	@OneToMany(mappedBy="id.carrinho")
 	private Set<Carrinhoitem> items = new HashSet<>();
 	
+	private	Double frete;
+	
 
 	public Carrinho() {
 
@@ -45,8 +47,15 @@ public class Carrinho implements Serializable{
 		this.id = id;
 		this.cliente = cliente;
 	}
+	
 
+	public Double getFrete() {
+		return frete;
+	}
 
+	public void setFrete(Double frete) {
+		this.frete = frete;
+	}
 
 	public Integer getId() {
 		return id;

@@ -30,14 +30,22 @@ public class CarrinhoService {
 	@Autowired
 	private CarrinhoItemRepository carrinhoItemRepository ;
 	
+	@Autowired
+	private FreteService freteService;
 	
 
 	public Carrinho findByCliente(Integer id) {
 		
 		System.out.println("<<<3>>");
 		Cliente cliente =  clienteService.find(id);
+		
+		double frete = freteService.calcularFrete(cliente.getCep());
+		cliente.getCarrinho().setFrete(frete);
+		
 		return repo.findByCliente(cliente);
 	}
+	
+	
 	
 	
 	public void inserirProdutoNoCarrinho(CarrinhoNewDTO objDto) {
