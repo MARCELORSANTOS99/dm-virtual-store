@@ -68,14 +68,14 @@ public class PixService {
 		StatusPaymentPix status = new StatusPaymentPix();
 		
 		
-		MercadoPagoData m = mercadoPagoClient.estornarPix("Bearer TEST-5372134168916464-111117-be645e8977177fe3644d88612ef5f8d1-63517358",idPagamentoPix,status);
+		MercadoPagoData m = mercadoPagoClient.estornarPix(token,idPagamentoPix,status);
 		
 	}
 	
 	
 public String statusPagamentoPix(PagamentoComPix obj) {
 
-		MercadoPagoData m = mercadoPagoClient.statusPagamentoPix("Bearer TEST-5372134168916464-111117-be645e8977177fe3644d88612ef5f8d1-63517358",obj.getIdPagamentoPix());
+		MercadoPagoData m = mercadoPagoClient.statusPagamentoPix(token,obj.getIdPagamentoPix());
 		
 		return m.getStatus();
 		

@@ -130,7 +130,10 @@ public class PedidoService {
 		
 		pagamentoRepository.save(obj.getPagamento());
 		itemPedidoRepository.saveAll(obj.getItens());
-		emailService.sendOrderConfirmationHtmlEmail(obj);
+		
+		if(obj.getPagamento().getEstado() == EstadoPagamento.PREPARACAO ) {
+			emailService.sendOrderConfirmationHtmlEmail(obj);
+		}
 		
 		carrinhoService.cleanCarrinho();
 		return obj;

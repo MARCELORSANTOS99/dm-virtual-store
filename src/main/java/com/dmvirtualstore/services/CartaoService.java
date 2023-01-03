@@ -56,12 +56,15 @@ public class CartaoService {
 			
 			System.out.println(response.getMerchantOrderId());
 			pagto.setReturnCode(response.getPayment().getReturnCode());
+			System.out.println(response.getPayment().getReturnCode());
 			
-			if(response.getPayment().getReturnCode() == "4" ||response.getPayment().getReturnCode() == "6" ) {
+			if(response.getPayment().getReturnCode().equals("4") ||response.getPayment().getReturnCode().equals("6") ) {
+				System.out.println("<< 4-c1>> ");
 				pagto.setEstado(EstadoPagamento.PREPARACAO);
 				
 			}else {
-				pagto.setEstado(EstadoPagamento.PENDENTE);
+				System.out.println("<< 4-c2>> ");
+				pagto.setEstado(EstadoPagamento.CANCELADO);
 			}
 			
 			pagto.setPaymentId(response.getPayment().getPaymentId());
@@ -80,9 +83,8 @@ public class CartaoService {
 	
 	public void estornarPagamentoCartao(PagamentoComCartao pagto) {
 		
-		Pedido p = new Pedido();
 		
-		CieloResponseEstorno response = cieloClient.estornarPagamentoCartao("a15b7095-9b04-4407-839d-0b742488dbf7", "HBYYGLYBBRRPBHHFXIHLKRCMGPKBBNJKRGYBRATX",p, pagto.getPaymentId());
+		CieloResponseEstorno response = cieloClient.estornarPagamentoCartao("a15b7095-9b04-4407-839d-0b742488dbf7", "HBYYGLYBBRRPBHHFXIHLKRCMGPKBBNJKRGYBRATX", pagto.getPaymentId());
 		System.out.println(response.toString());
 		if(response.getReasonMessage() == "Successful") {
 			pagto.setEstado(EstadoPagamento.CANCELADO);

@@ -24,8 +24,6 @@ public interface FeignClientDataCielo {
 	CieloResponseEstorno estornarPagamentoCartao(
 			@RequestHeader("MerchantId") String merchantId,
 			@RequestHeader("MerchantKey") String merchantKey,
-			//@RequestHeader("Content-Length") Integer content,
-			@RequestBody Pedido p,
 			@PathVariable String paymentId
 			);
 

@@ -24,16 +24,14 @@ public class FreteService {
 		
 		Double freteValor;
 		System.out.println("calcularFrete");
-		System.out.println(cepObj);
+		System.out.println(cepObj);//04777-050
 		
-		List<String> cepList = new ArrayList<String>(Arrays.asList(cepObj.split("-")));
-		System.out.println(cepList);
-		System.out.println(cepList.get(0));
-		System.out.println(Integer.parseInt(cepList.get(0)));
+		String cep = formatarCep(cepObj);
+		System.out.println(cep);//04777050
 		
-		Integer cep = Integer.parseInt(cepList.get(0));
+		Frete frete = repo.findFrete(Integer.parseInt(cep));
+		System.out.println(frete);
 		
-		Frete frete = repo.findFrete(cep);
 		if(frete != null) {
 			System.out.println(frete);
 			freteValor = frete.getValor();
@@ -43,4 +41,9 @@ public class FreteService {
 				
 		return freteValor;
 	}
+	
+	public static String formatarCep(String dado){
+		   dado = dado.replaceAll("-","");
+		   return dado;
+		}
 }

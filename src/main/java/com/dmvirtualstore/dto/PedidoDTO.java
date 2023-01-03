@@ -36,6 +36,7 @@ public class PedidoDTO implements Serializable {
 	private String formaPagamento;
 	private String numeroCartao;
 	private String bandeira;
+	private boolean autorizado;
 	private EnderecoDTO endereco;
 		
 
@@ -51,7 +52,7 @@ public class PedidoDTO implements Serializable {
 			this.formaPagamento = FormaPagamento.CARTAO.getDescricao();
 			this.numeroCartao = pagto.getNumeroDoCartao();
 			this.bandeira = pagto.getBandeira();
-			
+			this.autorizado = (pagto.getReturnCode().equals("4") || pagto.getReturnCode().equals("6")) ? true : false;
 		}
 		
 		if (obj.getPagamento() instanceof PagamentoComPix) {
@@ -226,6 +227,16 @@ public class PedidoDTO implements Serializable {
 	}
 	
 	
+
+	public boolean isAutorizado() {
+		return autorizado;
+	}
+
+
+
+	public void setAutorizado(boolean autorizado) {
+		this.autorizado = autorizado;
+	}
 
 
 
